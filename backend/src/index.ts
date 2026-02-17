@@ -2,6 +2,7 @@ import express from "express";
 import { ENV } from "./config/env";
 import { clerkMiddleware } from "@clerk/express";
 import cors from "cors";
+import routes from "./routes";
 
 const app = express();
 
@@ -9,6 +10,9 @@ app.use(clerkMiddleware());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors({ origin: ENV.FRONTEND_URL }));
+
+// API Routes
+app.use("/api", routes);
 
 const PORT = ENV.PORT || 3000;
 
