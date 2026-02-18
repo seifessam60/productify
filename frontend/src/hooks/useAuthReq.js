@@ -2,10 +2,13 @@ import { useAuth } from "@clerk/clerk-react";
 import { useEffect } from "react";
 import axiosInstance from "../lib/axios";
 
+let isInterceptorRegistered = false;
 const useAuthReq = () => {
   const { getToken, isLoaded, isSignedIn } = useAuth();
 
   useEffect(() => {
+    if (isInterceptorRegistered) return;
+    isInterceptorRegistered = true;
     const interceptor = axiosInstance.interceptors.request.use(
       async (config) => {
         if (isSignedIn) {
@@ -23,6 +26,7 @@ const useAuthReq = () => {
 
     return () => {
       axiosInstance.interceptors.request.eject(interceptor);
+      isInterceptorRegistered = false;
     };
   }, [getToken, isSignedIn]);
 
