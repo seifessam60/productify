@@ -1,4 +1,5 @@
 import { Routes, Route } from "react-router";
+import { SignedIn, SignedOut, RedirectToSignIn } from "@clerk/clerk-react";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Product from "./pages/Product";
@@ -21,9 +22,45 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/product/:id" element={<Product />} />
-          <Route path="/product/:id/edit" element={<EditProduct />} />
-          <Route path="/create" element={<CreateProduct />} />
-          <Route path="/profile" element={<Profile />} />
+          <Route
+            path="/product/:id/edit"
+            element={
+              <>
+                <SignedIn>
+                  <EditProduct />
+                </SignedIn>
+                <SignedOut>
+                  <RedirectToSignIn />
+                </SignedOut>
+              </>
+            }
+          />
+          <Route
+            path="/create"
+            element={
+              <>
+                <SignedIn>
+                  <CreateProduct />
+                </SignedIn>
+                <SignedOut>
+                  <RedirectToSignIn />
+                </SignedOut>
+              </>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <>
+                <SignedIn>
+                  <Profile />
+                </SignedIn>
+                <SignedOut>
+                  <RedirectToSignIn />
+                </SignedOut>
+              </>
+            }
+          />
         </Routes>
       </main>
     </div>
