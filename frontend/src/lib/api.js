@@ -38,8 +38,10 @@ export const deleteProduct = async (id) => {
 };
 
 // Comments
-export const addComment = async (commentData) => {
-  const response = await axiosInstance.post("comments", commentData);
+export const addComment = async ({ productId, content }) => {
+  const response = await axiosInstance.post(`comments/${productId}`, {
+    content,
+  });
   return response.data;
 };
 
