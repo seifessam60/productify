@@ -14,11 +14,11 @@ const router = Router();
 // GET /api/products - Get all products
 router.get("/", getProducts);
 
-// GET /api/products/:id - Get product by ID
-router.get("/:id", getProduct);
-
 // GET /api/products/my - Get products by user ID
 router.get("/my", requireAuth(), getUserProducts);
+
+// GET /api/products/:id - Get product by ID
+router.get("/:id", getProduct);
 
 // POST /api/products - Create a new product
 router.post("/", requireAuth(), createProductHandler);
