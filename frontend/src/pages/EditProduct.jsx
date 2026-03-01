@@ -1,61 +1,45 @@
 import { useParams, Link } from "react-router";
+import { useAuth } from "@clerk/clerk-react";
+import { useNavigate } from "react-router";
+import { useProduct, useUpdateProduct } from "../hooks/useProducts";
+import LoadingSpinner from "../components/LoadingSpinner";
+import EditProductForm from "../components/EditProductForm";
 
 function EditProduct() {
   const { id } = useParams();
+  const { userId } = useAuth();
+  const navigate = useNavigate();
 
-  return (
-    <div>
-      <div className="flex items-center gap-2 text-sm breadcrumbs mb-6">
-        <Link to={`/product/${id}`} className="link link-hover">
-          ← Back to Product
+  const { data: product, isLoading } = useProduct(id);
+  const updateProduct = useUpdateProduct();
+
+  if (isLoading) return <LoadingSpinner />;
+
+  if (!product || product.user.id !== userId) {
+    return (
+      <div className="text-center py-10">
+        <h2 className="text-2xl font-bold">Product not found</h2>
+        <Link to="/" className="btn btn-primary mt-4">
+          Back to Home
         </Link>
       </div>
+    );
+  }
 
-      <h1 className="text-3xl font-bold mb-6">Edit Product</h1>
-
-      <form className="space-y-4 max-w-lg">
-        <div className="form-control">
-          <label className="label">
-            <span className="label-text">Title</span>
-          </label>
-          <input
-            type="text"
-            placeholder="Product title"
-            className="input input-bordered w-full"
-          />
-        </div>
-
-        <div className="form-control">
-          <label className="label">
-            <span className="label-text">Description</span>
-          </label>
-          <textarea
-            placeholder="Product description"
-            className="textarea textarea-bordered w-full h-32"
-          />
-        </div>
-
-        <div className="form-control">
-          <label className="label">
-            <span className="label-text">URL</span>
-          </label>
-          <input
-            type="url"
-            placeholder="https://..."
-            className="input input-bordered w-full"
-          />
-        </div>
-
-        <div className="flex gap-2 pt-2">
-          <button type="submit" className="btn btn-primary">
-            Save Changes
-          </button>
-          <Link to={`/product/${id}`} className="btn btn-ghost">
-            Cancel
-          </Link>
-        </div>
-      </form>
-    </div>
+  return (
+    <EditProductForm
+      product={product}
+      isPending={updateProduct.isPending}
+      isError={updateProduct.isError}
+      onSubmit={(formData) => {
+        updateProduct.mutate(
+          { id, ...formData },
+          {
+            onSuccess: () => navigate(`/product/${id}`),
+          },
+        );
+      }}
+    />
   );
 }
 
