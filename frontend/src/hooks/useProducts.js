@@ -5,6 +5,7 @@ import {
   getProduct,
   getProducts,
   getMyProducts,
+  updateProduct,
 } from "../lib/api";
 import { useNavigate } from "react-router";
 
@@ -60,6 +61,19 @@ export const useDeleteProduct = () => {
     onError: (error) => {
       console.error("Failed to delete product:", error);
       alert("Failed to delete product. Please try again.");
+    },
+  });
+};
+
+export const useUpdateProduct = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: updateProduct,
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+      queryClient.invalidateQueries({ queryKey: ["product", variables.id] });
+      queryClient.invalidateQueries({ queryKey: ["myProducts"] });
     },
   });
 };
